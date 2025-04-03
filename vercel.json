@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "public",
+  "functions": {
+    "api/index.py": {
+      "includeFiles": "Data/**"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "env": {
+    "JWT_SECRET_KEY": "your-secure-jwt-secret-change-in-production"
+  },
+  "github": {
+    "enabled": true,
+    "silent": true
+  }
+} 
