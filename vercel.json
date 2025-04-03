@@ -10,6 +10,20 @@
   },
   "routes": [
     {
+      "src": "/api/test",
+      "dest": "/api/index.js",
+      "headers": {
+        "x-vercel-skip-toolbar": "1"
+      }
+    },
+    {
+      "src": "/api",
+      "dest": "/api/index.js",
+      "headers": {
+        "x-vercel-skip-toolbar": "1"
+      }
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/index.js"
     },

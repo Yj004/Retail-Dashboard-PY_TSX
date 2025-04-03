@@ -154,7 +154,8 @@ app.get('/api/test', (req, res) => {
     status: 'success',
     message: 'API is working correctly',
     timestamp: new Date().toISOString(),
-    auth_url: '/api/token'
+    auth_url: '/api/token',
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
