@@ -28,50 +28,29 @@ async function loadData() {
   try {
     const results = [];
     
-    // Try to read from local file first
-    try {
-      // Check if we're in a Vercel environment
-      const isVercel = process.env.VERCEL === '1';
+    console.log('Fetching data from GitHub...');
+    
+    // Fetch data from GitHub
+    const response = await fetch('https://raw.githubusercontent.com/Yj004/Retail-Dashboard-PY_TSX/main/Data/retail_data.csv');
+    const csvText = await response.text();
+    
+    console.log('Successfully fetched data from GitHub.');
+    
+    // Parse CSV data
+    const rows = csvText.split('\n');
+    const headers = rows[0].split(',');
+    
+    for (let i = 1; i < rows.length; i++) {
+      if (rows[i].trim() === '') continue;
       
-      if (isVercel) {
-        console.log('Running on Vercel, fetching data from GitHub...');
-        throw new Error('Skip local file on Vercel');
-      }
+      const values = rows[i].split(',');
+      const rowData = {};
       
-      console.log('Attempting to load data from local file...');
-      await new Promise((resolve, reject) => {
-        createReadStream(path.join(__dirname, '../Data/retail_data.csv'))
-          .pipe(csv())
-          .on('data', (data) => results.push(data))
-          .on('end', resolve)
-          .on('error', reject);
+      headers.forEach((header, index) => {
+        rowData[header.trim()] = values[index] ? values[index].trim() : '';
       });
-      console.log('Successfully loaded data from local file.');
-    } catch (localError) {
-      console.log('Could not load local file, fetching from GitHub...', localError.message);
       
-      // Fetch from GitHub if local file is not available
-      const response = await fetch('https://raw.githubusercontent.com/Yj004/Retail-Dashboard-PY_TSX/main/Data/retail_data.csv');
-      const csvText = await response.text();
-      
-      console.log('Successfully fetched data from GitHub.');
-      
-      // Parse CSV data
-      const rows = csvText.split('\n');
-      const headers = rows[0].split(',');
-      
-      for (let i = 1; i < rows.length; i++) {
-        if (rows[i].trim() === '') continue;
-        
-        const values = rows[i].split(',');
-        const rowData = {};
-        
-        headers.forEach((header, index) => {
-          rowData[header.trim()] = values[index] ? values[index].trim() : '';
-        });
-        
-        results.push(rowData);
-      }
+      results.push(rowData);
     }
     
     // Process data - convert string values to appropriate types
@@ -108,9 +87,11 @@ async function loadData() {
   }
 }
 
-// Load data on startup
+// Initial data load (optional for Vercel - will be loaded on-demand)
 loadData().then(data => {
   shopifyData = data;
+}).catch(err => {
+  console.error('Failed to load initial data:', err);
 });
 
 // User authentication
@@ -141,6 +122,19 @@ function authenticate(req, res, next) {
   } catch (error) {
     return res.status(401).json({ detail: 'Invalid or expired token' });
   }
+}
+
+// Helper function to ensure data is loaded
+async function ensureDataLoaded(req, res, next) {
+  if (shopifyData.length === 0) {
+    console.log('No data loaded, loading now...');
+    try {
+      shopifyData = await loadData();
+    } catch (error) {
+      console.error('Error loading data in middleware:', error);
+    }
+  }
+  next();
 }
 
 // Routes
@@ -215,7 +209,7 @@ app.post('/api/token', (req, res) => {
 });
 
 // Get paginated data
-app.get('/api/data', (req, res) => {
+app.get('/api/data', ensureDataLoaded, (req, res) => {
   const skip = parseInt(req.query.skip) || 0;
   const limit = parseInt(req.query.limit) || 100;
   
@@ -225,7 +219,7 @@ app.get('/api/data', (req, res) => {
 });
 
 // Get stats
-app.get('/api/stats', (req, res) => {
+app.get('/api/stats', ensureDataLoaded, (req, res) => {
   try {
     const data = shopifyData;
     
@@ -371,7 +365,7 @@ app.get('/api/stats', (req, res) => {
 });
 
 // Filter data
-app.get('/api/data/filter', (req, res) => {
+app.get('/api/data/filter', ensureDataLoaded, (req, res) => {
   try {
     const {
       status, delivery_status, country, province, state, payment_method,
@@ -437,7 +431,7 @@ app.get('/api/data/filter', (req, res) => {
 });
 
 // Get columns
-app.get('/api/columns', (req, res) => {
+app.get('/api/columns', ensureDataLoaded, (req, res) => {
   if (shopifyData.length === 0) {
     return res.json([]);
   }
@@ -447,7 +441,7 @@ app.get('/api/columns', (req, res) => {
 });
 
 // Get filter options
-app.get('/api/filter-options', (req, res) => {
+app.get('/api/filter-options', ensureDataLoaded, (req, res) => {
   try {
     const data = shopifyData;
     const options = {};
@@ -477,27 +471,11 @@ app.get('/api/filter-options', (req, res) => {
   }
 });
 
-// Start server
-if (require.main === module) {
-  // Function to try starting the server with fallback ports
-  const startServer = (port) => {
-    const server = app.listen(port)
-      .on('error', (err) => {
-        if (err.code === 'EADDRINUSE') {
-          console.log(`Port ${port} is in use, trying ${port + 1}...`);
-          startServer(port + 1);
-        } else {
-          console.error('Error starting server:', err);
-        }
-      })
-      .on('listening', () => {
-        const actualPort = server.address().port;
-        console.log(`Server running on port ${actualPort}`);
-      });
-  };
-  
-  // Start with the default port
-  startServer(PORT);
+// For local development only
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(3001, () => {
+    console.log('Server running on port 3001');
+  });
 }
 
 // Export the Express API for Vercel
