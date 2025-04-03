@@ -208,8 +208,9 @@ app.post('/api/token', (req, res) => {
   res.json({ access_token: token, token_type: 'bearer' });
 });
 
+// Secured routes below - use the authenticate middleware
 // Get paginated data
-app.get('/api/data', ensureDataLoaded, (req, res) => {
+app.get('/api/data', ensureDataLoaded, authenticate, (req, res) => {
   const skip = parseInt(req.query.skip) || 0;
   const limit = parseInt(req.query.limit) || 100;
   
@@ -219,7 +220,7 @@ app.get('/api/data', ensureDataLoaded, (req, res) => {
 });
 
 // Get stats
-app.get('/api/stats', ensureDataLoaded, (req, res) => {
+app.get('/api/stats', ensureDataLoaded, authenticate, (req, res) => {
   try {
     const data = shopifyData;
     
@@ -365,7 +366,7 @@ app.get('/api/stats', ensureDataLoaded, (req, res) => {
 });
 
 // Filter data
-app.get('/api/data/filter', ensureDataLoaded, (req, res) => {
+app.get('/api/data/filter', ensureDataLoaded, authenticate, (req, res) => {
   try {
     const {
       status, delivery_status, country, province, state, payment_method,
@@ -431,7 +432,7 @@ app.get('/api/data/filter', ensureDataLoaded, (req, res) => {
 });
 
 // Get columns
-app.get('/api/columns', ensureDataLoaded, (req, res) => {
+app.get('/api/columns', ensureDataLoaded, authenticate, (req, res) => {
   if (shopifyData.length === 0) {
     return res.json([]);
   }
@@ -441,7 +442,7 @@ app.get('/api/columns', ensureDataLoaded, (req, res) => {
 });
 
 // Get filter options
-app.get('/api/filter-options', ensureDataLoaded, (req, res) => {
+app.get('/api/filter-options', ensureDataLoaded, authenticate, (req, res) => {
   try {
     const data = shopifyData;
     const options = {};
