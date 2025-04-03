@@ -1,0 +1,100 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f5;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.login-paper {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-avatar {
+  margin: 10px;
+  background-color: #1976d2;
+}
+
+.login-form {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.dashboard-container {
+  padding: 20px;
+}
+
+.card {
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.chart-container {
+  height: 300px;
+  margin-bottom: 20px;
+}
+
+.data-grid-container {
+  height: 600px;
+  width: 100%;
+}
+
+.filter-bar {
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.page-title {
+  margin-bottom: 20px;
+}
+
+.drawer {
+  width: 240px;
+}
+
+.drawer-paper {
+  width: 240px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 8px;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 24px;
+}
+
+.app-bar-spacer {
+  min-height: 64px;
+} 
