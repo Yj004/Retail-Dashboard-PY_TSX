@@ -50,7 +50,8 @@ const colors = {
 
 const DashboardLayout = ({ children, title }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [notificationsAnchorEl, setNotificationsAnchorEl] = useState(null);
+  const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const { logout, user } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -58,9 +59,20 @@ const DashboardLayout = ({ children, title }) => {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleNavigation = (path) => {
-    navigate(path);
-    setMobileOpen(false);
+  const handleNotificationsClick = (event) => {
+    setNotificationsAnchorEl(event.currentTarget);
+  };
+
+  const handleNotificationsClose = () => {
+    setNotificationsAnchorEl(null);
+  };
+
+  const handleProfileClick = (event) => {
+    setProfileAnchorEl(event.currentTarget);
+  };
+
+  const handleProfileClose = () => {
+    setProfileAnchorEl(null);
   };
 
   const handleLogout = () => {
@@ -68,12 +80,9 @@ const DashboardLayout = ({ children, title }) => {
     navigate('/login');
   };
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+  const handleNavigation = (path) => {
+    navigate(path);
+    setMobileOpen(false);
   };
 
   const drawer = (
@@ -286,6 +295,7 @@ const DashboardLayout = ({ children, title }) => {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <IconButton 
               color="inherit" 
+              onClick={handleNotificationsClick}
               sx={{ 
                 mr: 1,
                 backgroundColor: colors.light,
@@ -301,10 +311,9 @@ const DashboardLayout = ({ children, title }) => {
             
             <Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
               <IconButton
-                onClick={handleMenuOpen}
+                onClick={handleProfileClick}
                 sx={{ 
                   p: 0.5,
-                  border: `2px solid ${colors.border}`,
                   '&:hover': {
                     backgroundColor: colors.light,
                   },
@@ -321,16 +330,30 @@ const DashboardLayout = ({ children, title }) => {
                 </Avatar>
               </IconButton>
               <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleMenuClose}
+                anchorEl={notificationsAnchorEl}
+                open={Boolean(notificationsAnchorEl)}
+                onClose={handleNotificationsClose}
                 PaperProps={{
                   elevation: 3,
                   sx: { minWidth: 180, borderRadius: 2, mt: 1 }
                 }}
               >
-                <MenuItem onClick={() => handleNavigation('/profile')}>Profile</MenuItem>
+                <MenuItem onClick={handleNotificationsClose}>Recent Orders (3)</MenuItem>
+                <MenuItem onClick={handleNotificationsClose}>New Messages (1)</MenuItem>
+                <MenuItem onClick={handleNotificationsClose}>View All Notifications</MenuItem>
+              </Menu>
+              
+              <Menu
+                anchorEl={profileAnchorEl}
+                open={Boolean(profileAnchorEl)}
+                onClose={handleProfileClose}
+                PaperProps={{
+                  elevation: 3,
+                  sx: { minWidth: 180, borderRadius: 2, mt: 1 }
+                }}
+              >
                 <MenuItem onClick={() => handleNavigation('/settings')}>Settings</MenuItem>
+                <MenuItem onClick={() => handleNavigation('/profile')}>Profile</MenuItem>
                 <Divider />
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>

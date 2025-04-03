@@ -7,7 +7,7 @@ import DataTable from './pages/DataTable';
 import Settings from './pages/Settings';
 import { Box, CircularProgress } from '@mui/material';
 
-// Protected route component that redirects to login if not authenticated
+// Protected route component that checks authentication
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useContext(AuthContext);
   const location = useLocation();
@@ -41,6 +41,7 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      
       <Route
         path="/"
         element={
@@ -49,6 +50,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+      
       <Route
         path="/dashboard"
         element={
@@ -57,6 +59,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+      
       <Route
         path="/data"
         element={
@@ -65,6 +68,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+      
       <Route
         path="/settings"
         element={
@@ -73,6 +77,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+      
       {/* Fallback route for any other path */}
       <Route
         path="*"

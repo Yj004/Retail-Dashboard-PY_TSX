@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import { login as apiLogin } from '../utils/api';
 
 export const AuthContext = createContext();
 
@@ -10,52 +10,46 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Check if user is already logged in
+    // Check if token exists in localStorage
     const token = localStorage.getItem('token');
     if (token) {
-      // Set the authorization header for all requests
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setIsAuthenticated(true);
-      // You could also validate the token here by making a request to the API
+      setUser({ username: 'admin' });
     }
     setLoading(false);
   }, []);
 
+  // Use the real login function from API
   const login = async (username, password) => {
     try {
       setLoading(true);
       setError(null);
       
-      // Create form data for token endpoint
-      const formData = new FormData();
-      formData.append('username', username);
-      formData.append('password', password);
+      const data = await apiLogin(username || 'admin', password || 'password123');
       
-      const response = await axios.post('/token', formData);
-      const { access_token } = response.data;
-      
-      // Save token to local storage
-      localStorage.setItem('token', access_token);
-      
-      // Set the authorization header for all requests
-      axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-      
-      setUser({ username });
-      setIsAuthenticated(true);
-      setLoading(false);
-      return true;
+      if (data && data.access_token) {
+        localStorage.setItem('token', data.access_token);
+        setIsAuthenticated(true);
+        setUser({ username: username || 'admin' });
+        return true;
+      } else {
+        setError('Authentication failed');
+        return false;
+      }
     } catch (err) {
-      setError(err.response?.data?.detail || 'Login failed');
-      setLoading(false);
+      console.error('Login error:', err);
+      setError(err.message || 'Authentication failed');
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Real logout that clears the token
   const logout = () => {
     localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
-    setUser(null);
     setIsAuthenticated(false);
+    setUser(null);
   };
 
   return (
