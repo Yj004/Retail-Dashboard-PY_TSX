@@ -1,11 +1,14 @@
-# Shopify Admin Dashboard
+# Retail Dashboard
 
-An interactive dashboard for Shopify order data with login-based authentication, data visualization, and filtering capabilities.
+An interactive dashboard for retail order data with login-based authentication, data visualization, and filtering capabilities.
+
+[View the live deployment on Vercel](#) (Link to be added after deployment)
 
 ## Features
 
 - **Secure Authentication:** Login-based access to protect your data
 - **Interactive Dashboard:** Visualize sales data with charts and statistics
+- **Advanced Filtering:** Filter data by multiple criteria (date, status, etc.)
 - **Data Table:** View, filter, and paginate through your order data
 - **Extensible Schema:** Add new columns to your data as needed
 - **Responsive Design:** Works on desktop and mobile devices
@@ -13,47 +16,57 @@ An interactive dashboard for Shopify order data with login-based authentication,
 ## Project Structure
 
 ```
-admin_shopify_dashboard/
-├── backend/                 # Python FastAPI backend
-│   ├── main.py              # Main API file
-│   └── requirements.txt     # Python dependencies
-├── frontend/                # React frontend
-│   ├── public/              # Static files
-│   └── src/                 # React source code
-│       ├── components/      # Reusable components
-│       ├── context/         # Context providers
-│       ├── pages/           # Page components
-│       └── utils/           # Utility functions
-└── Data/                    # Data files
-    └── shopify.csv          # Sample order data
+retail-dashboard/
+├── api/                  # Node.js Express API
+│   ├── index.js          # Main API file
+│   └── package.json      # Node.js dependencies
+├── frontend/             # React frontend
+│   ├── public/           # Static files
+│   └── src/              # React source code
+│       ├── components/   # Reusable components
+│       ├── context/      # Context providers
+│       ├── pages/        # Page components
+│       └── utils/        # Utility functions
+└── Data/                 # Data files
+    └── retail_data.csv   # Sample retail data
 ```
 
-## Setup Instructions
+## Tech Stack
+
+### Frontend:
+- React with functional components and hooks
+- Material UI for components and styling
+- Chart.js for data visualization
+- React Router for navigation
+- Context API for state management
+- Axios for API requests
+
+### Backend:
+- Node.js with Express for the API framework
+- JWT for authentication
+- CSV parsing for data management
+- Deployed on Vercel
+
+## Local Development Setup
 
 ### Backend Setup
 
-1. Navigate to the backend directory:
+1. Navigate to the API directory:
    ```
-   cd backend
-   ```
-
-2. Create a virtual environment (optional but recommended):
-   ```
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   cd api
    ```
 
-3. Install dependencies:
+2. Install dependencies:
    ```
-   pip install -r requirements.txt
-   ```
-
-4. Start the backend server:
-   ```
-   python main.py
+   npm install
    ```
 
-   The API will be available at http://localhost:8000
+3. Start the backend server:
+   ```
+   npm start
+   ```
+
+   The API will be available at http://localhost:3001
 
 ### Frontend Setup
 
@@ -74,6 +87,26 @@ admin_shopify_dashboard/
 
    The application will be available at http://localhost:3000
 
+### Combined Development
+
+1. From the root directory, you can start both frontend and backend:
+   ```
+   npm run dev
+   ```
+
+## Deployment
+
+This project is configured for deployment on Vercel using the `vercel.json` configuration file, which:
+
+1. Sets up serverless API functions for the Node.js backend
+2. Configures routing for both the API and frontend
+3. Sets necessary environment variables
+
+To deploy:
+1. Push your code to GitHub
+2. Connect your repository to Vercel
+3. Vercel will automatically build and deploy both the API and frontend
+
 ## Usage
 
 1. Log in with the following credentials:
@@ -85,19 +118,10 @@ admin_shopify_dashboard/
    - **Data Table:** Browse and filter order data
    - **Settings:** Add new columns to the dataset
 
-## Adding New Columns
-
-1. Go to the Settings page
-2. Enter the name of your new column
-3. Optionally, provide a default value
-4. Click "Add Column"
-
-The new column will be immediately available in the data table.
-
 ## Security Note
 
-This application uses a simple in-memory user database for demonstration purposes. For production use, you should implement a proper authentication system with a secure database.
+This application uses a simple in-memory user database for demonstration purposes. For production use, implement a proper authentication system with a secure database.
 
 ## License
 
-MIT 
+MIT

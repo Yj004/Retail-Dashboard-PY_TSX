@@ -22,10 +22,12 @@
   },
   "scripts": {
     "start": "cd frontend && npm start",
+    "start-api": "cd api && npm start",
+    "dev": "concurrently \"npm run start\" \"npm run start-api\"",
     "build": "cd frontend && npm install && npm run build && cp -r build/* ../public/",
     "test": "cd frontend && npm test",
     "eject": "cd frontend && npm run eject",
-    "vercel-build": "export NODE_ENV=production && mkdir -p public && cd frontend && npm install && npm run build && cp -r build/* ../public/"
+    "vercel-build": "export NODE_ENV=production && mkdir -p public && cd api && npm install && cd ../frontend && npm install && npm run build && cp -r build/* ../public/"
   },
   "eslintConfig": {
     "extends": [
@@ -44,5 +46,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
   }
 } 
