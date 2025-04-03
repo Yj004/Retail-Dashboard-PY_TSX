@@ -182,10 +182,50 @@ const loginSilently = async () => {
   return false;
 };
 
-// API functions
+// Fallback data for the data table
+const getFallbackTableData = () => {
+  // Generate 100 rows of sample data
+  const statuses = ["Completed", "Processing", "Cancelled", "Refunded"];
+  const deliveryStatuses = ["Delivered", "In Transit", "Pending"];
+  const states = ["California", "New York", "Texas", "Florida", "Illinois", "Pennsylvania", "Ohio"];
+  const paymentMethods = ["Credit Card", "PayPal", "Bank Transfer"];
+  const skus = ["SKU1234", "SKU5678", "SKU9012", "SKU3456", "SKU7890"];
+  
+  const sampleData = [];
+  for (let i = 1; i <= 100; i++) {
+    const total = Math.floor(Math.random() * 2000) + 500;
+    const quantity = Math.floor(Math.random() * 10) + 1;
+    
+    // Create a random date within the last 6 months
+    const date = new Date();
+    date.setMonth(date.getMonth() - Math.floor(Math.random() * 6));
+    
+    sampleData.push({
+      ID: `ORD-${10000 + i}`,
+      Date: date.toISOString().split('T')[0],
+      Total: total,
+      Quantity: quantity,
+      Status: statuses[Math.floor(Math.random() * statuses.length)],
+      "Deliver Status": deliveryStatuses[Math.floor(Math.random() * deliveryStatuses.length)],
+      State: states[Math.floor(Math.random() * states.length)],
+      SKU: skus[Math.floor(Math.random() * skus.length)],
+      "Payment Method": paymentMethods[Math.floor(Math.random() * paymentMethods.length)],
+      "Shipping Country": "United States"
+    });
+  }
+  
+  return sampleData;
+};
 
 // Data fetching
 export const fetchData = async (skip = 0, limit = 100) => {
+  // In production (Vercel), immediately return fallback data
+  if (isProduction) {
+    console.log('Using fallback table data for Vercel deployment');
+    const allData = getFallbackTableData();
+    return allData.slice(skip, skip + limit);
+  }
+  
   try {
     const endpoint = `/api/data?skip=${skip}&limit=${limit}`;
     const response = await api.get(endpoint);
@@ -197,6 +237,38 @@ export const fetchData = async (skip = 0, limit = 100) => {
 };
 
 export const fetchFilteredData = async (filters, skip = 0, limit = 100) => {
+  // In production (Vercel), return filtered fallback data
+  if (isProduction) {
+    console.log('Using filtered fallback data for Vercel deployment');
+    let data = getFallbackTableData();
+    
+    // Apply filters
+    if (filters.status && filters.status !== 'All') {
+      data = data.filter(item => item.Status === filters.status);
+    }
+    if (filters.delivery_status && filters.delivery_status !== 'All') {
+      data = data.filter(item => item["Deliver Status"] === filters.delivery_status);
+    }
+    if (filters.state && filters.state !== 'All') {
+      data = data.filter(item => item.State === filters.state);
+    }
+    if (filters.payment_method && filters.payment_method !== 'All') {
+      data = data.filter(item => item["Payment Method"] === filters.payment_method);
+    }
+    
+    // Apply date filters
+    if (filters.from_date) {
+      const fromDate = new Date(filters.from_date);
+      data = data.filter(item => new Date(item.Date) >= fromDate);
+    }
+    if (filters.to_date) {
+      const toDate = new Date(filters.to_date);
+      data = data.filter(item => new Date(item.Date) <= toDate);
+    }
+    
+    return data.slice(skip, skip + limit);
+  }
+  
   try {
     const params = { skip, limit, ...filters };
     const endpoint = '/api/data/filter';
@@ -209,24 +281,31 @@ export const fetchFilteredData = async (filters, skip = 0, limit = 100) => {
 };
 
 export const fetchStats = async () => {
+  // In production (Vercel), immediately return fallback data without calling the API
+  if (isProduction) {
+    console.log('Using fallback stats data for Vercel deployment');
+    return getFallbackStatsData();
+  }
+  
   try {
     const endpoint = '/api/stats';
     const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
     console.error('Error fetching stats:', error);
-    
-    // If we're in production (Vercel), return fallback data
-    if (isProduction) {
-      console.log('Using fallback stats data for Vercel deployment');
-      return getFallbackStatsData();
-    }
-    
     throw error;
   }
 };
 
 export const fetchColumns = async () => {
+  // In production (Vercel), return a static list of columns
+  if (isProduction) {
+    return [
+      "ID", "Date", "Total", "Quantity", "Status", "Deliver Status", 
+      "State", "SKU", "Payment Method", "Shipping Country"
+    ];
+  }
+  
   try {
     const endpoint = '/api/columns';
     const response = await api.get(endpoint);
@@ -238,23 +317,23 @@ export const fetchColumns = async () => {
 };
 
 export const fetchFilterOptions = async () => {
+  // In production (Vercel), immediately return fallback filter options
+  if (isProduction) {
+    console.log('Using fallback filter options for Vercel deployment');
+    return {
+      Status: ["All", "Completed", "Processing", "Cancelled", "Refunded"],
+      "Deliver Status": ["All", "Delivered", "In Transit", "Pending"],
+      State: ["All", "California", "New York", "Texas", "Florida", "Illinois"],
+      "Payment Method": ["All", "Credit Card", "PayPal", "Bank Transfer"]
+    };
+  }
+  
   try {
     const endpoint = '/api/filter-options';
     const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
     console.error('Error fetching filter options:', error);
-    
-    // If we're in production (Vercel), return fallback filter options
-    if (isProduction) {
-      return {
-        status: ["All", "Completed", "Processing", "Cancelled", "Refunded"],
-        delivery_status: ["All", "Delivered", "In Transit", "Pending"],
-        states: ["All", "California", "New York", "Texas", "Florida", "Illinois"],
-        payment_methods: ["All", "Credit Card", "PayPal", "Bank Transfer"]
-      };
-    }
-    
     throw error;
   }
 };
