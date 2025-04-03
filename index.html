@@ -46,6 +46,12 @@
         .button:hover {
             background-color: #0051cc;
         }
+        .dashboard-link {
+            margin-top: 20px;
+            display: block;
+            font-size: 18px;
+            font-weight: 500;
+        }
         .api-link {
             margin-top: 20px;
             color: #0070f3;
@@ -54,6 +60,11 @@
         .api-link:hover {
             text-decoration: underline;
         }
+        .note {
+            font-size: 14px;
+            color: #888;
+            margin-top: 30px;
+        }
     </style>
 </head>
 <body>
@@ -61,10 +72,16 @@
         <h1>Retail Dashboard</h1>
         <p>An interactive dashboard for retail order data with login-based authentication, data visualization, and filtering capabilities.</p>
         
-        <a href="/api/test" class="button">Test API Connection</a>
+        <a href="/frontend/build/index.html" class="button">Access Dashboard</a>
+        
+        <p class="dashboard-link">Login Credentials:</p>
+        <p>Username: <strong>admin</strong></p>
+        <p>Password: <strong>password123</strong></p>
         
         <p style="margin-top: 30px;">For API documentation, check out:</p>
         <a href="/api" class="api-link">API Root Endpoint</a>
+        
+        <p class="note">Note: This dashboard is a demonstration project with mock data.</p>
     </div>
 </body>
 </html> 

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retail Dashboard</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f5f5f7;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #0070f3;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #0051cc;
+        }
+        .dashboard-link {
+            margin-top: 20px;
+            display: block;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .api-link {
+            margin-top: 20px;
+            color: #0070f3;
+            text-decoration: none;
+        }
+        .api-link:hover {
+            text-decoration: underline;
+        }
+        .note {
+            font-size: 14px;
+            color: #888;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Retail Dashboard</h1>
+        <p>An interactive dashboard for retail order data with login-based authentication, data visualization, and filtering capabilities.</p>
+        
+        <a href="/frontend/build/index.html" class="button">Access Dashboard</a>
+        
+        <p class="dashboard-link">Login Credentials:</p>
+        <p>Username: <strong>admin</strong></p>
+        <p>Password: <strong>password123</strong></p>
+        
+        <p style="margin-top: 30px;">For API documentation, check out:</p>
+        <a href="/api" class="api-link">API Root Endpoint</a>
+        
+        <p class="note">Note: This dashboard is a demonstration project with mock data.</p>
+    </div>
+</body>
+</html> 
